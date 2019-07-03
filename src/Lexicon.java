@@ -186,6 +186,7 @@ public class Lexicon {
 					theWordList[wi] = new AbsentLexPhon(); 
 		}
 	}
+
 	
 	public int numAbsentEtyma()
 	{
@@ -194,4 +195,6 @@ public class Lexicon {
 			if (lex.print().equals(ABS_PR))	cnt += 1;
 		return cnt;
 	}
+	
+	
 }

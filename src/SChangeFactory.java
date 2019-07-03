@@ -224,7 +224,7 @@ public class SChangeFactory {
 			RestrictPhone theDest = parseSinglePhonicDest(inputDest); 
 			if (!usingAlphFeats)	usingAlphFeats = theDest.has_alpha_specs(); 
 			if (!usingAlphFeats && priorSpecified)
-				usingAlphFeats = parseNewContext(inputPrior,boundsMatter).hasAlphaSpecs();
+				usingAlphFeats = parseNewSeqFilter(inputPrior,boundsMatter).hasAlphaSpecs();
 			// don't need to check with posterior since it won't have any if there are none in all of source, dest, and prior.
 			
 			// note that parseSinglePhonicDest returns a word bound "#" if the input is not a valid string referring to a single phonic.
@@ -232,8 +232,8 @@ public class SChangeFactory {
 			{
 				SChangeFeat thisShift = usingAlphFeats ? new SChangeFeatAlpha(getFeatMatrix(inputSource), theDest, boundsMatter, inp) :
 						new SChangeFeat(getFeatMatrix(inputSource), theDest, boundsMatter, inp); 
-				if(priorSpecified) thisShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-				if(postrSpecified) thisShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+				if(priorSpecified) thisShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+				if(postrSpecified) thisShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 				output.add(thisShift); 
 				return output;  
 			}
@@ -244,8 +244,8 @@ public class SChangeFactory {
 					parsePhoneSequenceForDest(inputDest), inp) : new SChangeFeatToPhone(featIndices, targSource, 
 					parsePhoneSequenceForDest(inputDest), inp); 
 				//errors will be caught by assertions in parsePhoneSequenceForDest
-			if(priorSpecified) thisShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-			if(postrSpecified) thisShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+			if(priorSpecified) thisShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+			if(postrSpecified) thisShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 			output.add(thisShift); 
 			return output;  
 		}
@@ -261,8 +261,8 @@ public class SChangeFactory {
 						parseRestrictPhoneSequence(inputSource), parseRestrictPhoneSequence(inputDest,true), inp) : 
 							new SChangeSeqToSeq(featIndices, symbToFeatVects, parseRestrictPhoneSequence(inputSource),
 									parseRestrictPhoneSequence(inputDest,true), inp); 
-				if(priorSpecified) thisShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-				if(postrSpecified) thisShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+				if(priorSpecified) thisShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+				if(postrSpecified) thisShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 				output.add(thisShift); 
 				return output;  
 			}
@@ -270,8 +270,8 @@ public class SChangeFactory {
 			//else, i.e. its a SChangeFeatToPhone 
 			SChangeFeatToPhone thisShift = new SChangeFeatToPhone(featIndices, 
 					parseRestrictPhoneSequence(inputSource), parsePhoneSequenceForDest(inputDest), inp); 
-			if(priorSpecified) thisShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-			if(postrSpecified) thisShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+			if(priorSpecified) thisShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+			if(postrSpecified) thisShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 			output.add(thisShift); 
 			return output;  
 		}
@@ -290,8 +290,8 @@ public class SChangeFactory {
 				ArrayList<RestrictPhone> destMutations = new ArrayList<RestrictPhone>();
 				destMutations.add(getFeatMatrix(inputDest, true)) ; 
 				SChangePhone newShift = new SChangePhone(sourceSegs, destMutations, inp);
-				if(priorSpecified) newShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-				if(postrSpecified) newShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+				if(priorSpecified) newShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+				if(postrSpecified) newShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 				output.add(newShift); 
 				return output;
 			}
@@ -301,8 +301,8 @@ public class SChangeFactory {
 				+ "same mutations must be applied to all disjunctions in the source target, which all must be the same length"; 
 			ArrayList<RestrictPhone> destMutations = new ArrayList<RestrictPhone>(parseRestrictPhoneSequence(inputDest, true)); 
 			SChangePhone newShift = new SChangePhone(sourceSegs, destMutations, inp);
-			if(priorSpecified) newShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-			if(postrSpecified) newShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+			if(priorSpecified) newShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+			if(postrSpecified) newShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 			output.add(newShift); 
 			return output;
 		}
@@ -311,8 +311,8 @@ public class SChangeFactory {
 		assert sourceSegs.size() == destSegs.size() : 
 			"Error: mismatch in the number of disjunctions of source segs and disjunctions of dest segs!";
 		SChangePhone newShift = new SChangePhone(sourceSegs, destSegs, inp); 
-		if(priorSpecified) newShift.setPriorContext(parseNewContext(inputPrior, boundsMatter)); 
-		if(postrSpecified) newShift.setPostContext(parseNewContext(inputPostr, boundsMatter));
+		if(priorSpecified) newShift.setPriorContext(parseNewSeqFilter(inputPrior, boundsMatter)); 
+		if(postrSpecified) newShift.setPostContext(parseNewSeqFilter(inputPostr, boundsMatter));
 		output.add(newShift); 
 		return output;
 	}
@@ -496,7 +496,7 @@ public class SChangeFactory {
 	 * @precondition : all elements separated phDelim 
 	 * @return
 	 */
-	public SChangeContext parseNewContext(String input, boolean boundsMatter)
+	public SequentialFilter parseNewSeqFilter(String input, boolean boundsMatter)
 	{
 		String inp = forceParenSpaceConsistency(input); //force single spaces on spaces surrounding
 			//parenthetical symbols, in order to standardize and make errors more controllable as code expands
@@ -566,7 +566,7 @@ public class SChangeFactory {
 		String[] theParenMap = new String[parenMapInProgress.size()];
 		theParenMap = parenMapInProgress.toArray(theParenMap); 
 		
-		return new SChangeContext(thePlaceRestrs, theParenMap, boundsMatter) ;
+		return new SequentialFilter(thePlaceRestrs, theParenMap, boundsMatter) ;
 	}
 	
 	/** isValidFeatSpecList

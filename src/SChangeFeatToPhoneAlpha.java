@@ -13,7 +13,7 @@ public class SChangeFeatToPhoneAlpha extends SChangeFeatToPhone {
 	}
 	
 	public SChangeFeatToPhoneAlpha(HashMap<String, Integer> ftInds, List<RestrictPhone> targSpecs, List<Phone> dest,
-			SChangeContext prior, SChangeContext postr, String origForm)
+			SequentialFilter prior, SequentialFilter postr, String origForm)
 	{	super (ftInds, targSpecs, dest,prior, postr, origForm);	
 		ALPH_VARS = new HashMap<String,String>(); need_to_reset = false;
 	}

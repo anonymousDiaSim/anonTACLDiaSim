@@ -21,7 +21,7 @@ public class SChangeSeqToSeqAlpha extends SChangeSeqToSeq{
 	}
 	
 	public SChangeSeqToSeqAlpha(HashMap<String, Integer> ftInds, HashMap<String,String> symb_map,  List<RestrictPhone> trgsrc, List<RestrictPhone> dstSpcs,
-			SChangeContext prior, SChangeContext postr, String origForm)
+			SequentialFilter prior, SequentialFilter postr, String origForm)
 	{	super(ftInds, symb_map, trgsrc, dstSpcs, prior, postr, origForm);
 		need_to_reset = false;
 	}
